@@ -1,7 +1,9 @@
 from bs4 import BeautifulSoup
 import requests
 import json
-from flask import Flask, jsonify
+import csv
+
+
 
 busqueda = "Televisor" #Recuerda de quitarlo y poner un input
 url = "https://www.amazon.com/s?k=" + busqueda
@@ -41,7 +43,6 @@ for elemento in recorre_productos:
 
 #-------------------------------------PRECIOS------------------------------------------------------------------------
 
-
 precio = []
 
 for elemento in recorre_productos:
@@ -50,5 +51,18 @@ for elemento in recorre_productos:
     if elementos_precio and elementos_precio_decimal:
         precio.append(elementos_precio.text.strip() + elementos_precio_decimal.text.strip())
         
-for i in precio:
-    print(i)
+
+#------------------------------------exportar data a csv---------------------------------------------------------------
+
+nombre_archivo = "productos.csv"
+
+# Abre el archivo en modo de escritura
+with open(nombre_archivo, mode='w', newline='') as archivo_csv:
+    escritor_csv = csv.writer(archivo_csv)
+
+    # Escribe la primera fila con los encabezados
+    escritor_csv.writerow(['Nombre', 'Precio', 'Enlace'])
+
+    # Combina las listas y escribe los datos en el archivo CSV
+    for n, p, h in zip(nombre, precio, href):
+        escritor_csv.writerow([n, p, h])
